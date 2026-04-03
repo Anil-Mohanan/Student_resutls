@@ -3,34 +3,36 @@
 <html>
 
 <head>
-       <title>Manage Subjects</title>
+       <title>Manage Exams</title>
        <link rel="stylesheet" href="{% static 'results/style.css' %}">
 </head>
 
 <body>
        <div class="topbar">
-              <h2>Subjects</h2>
+              <h2>Exams</h2>
               <a href="{% url 'dashboard' %}">← Dashboard</a>
        </div>
 
-       <a href="{% url 'add_subject' %}" class="btn">+ Add Subject</a><br><br>
+       <a href="{% url 'add_exam' %}" class="btn">+ Add Exam</a><br><br>
 
-       {% for class_name, subjects in subjects_by_class.items %}
+       {% for class_name, exams in exams_by_class.items %}
        <div class="table-wrapper" style="margin-bottom:25px">
               <h3>Class {{ class_name }}</h3>
               <table>
                      <tr>
                             <th>#</th>
-                            <th>Subject Name</th>
+                            <th>Exam Name</th>
+                            <th>Date</th>
                      </tr>
-                     {% for subject in subjects %}
+                     {% for exam in exams %}
                      <tr>
                             <td>{{ forloop.counter }}</td>
-                            <td>{{ subject.name }}</td>
+                            <td>{{ exam.name }}</td>
+                            <td>{{ exam.date }}</td>
                      </tr>
                      {% empty %}
                      <tr>
-                            <td colspan="2">No subjects added for this class.</td>
+                            <td colspan="3">No exams added yet.</td>
                      </tr>
                      {% endfor %}
               </table>

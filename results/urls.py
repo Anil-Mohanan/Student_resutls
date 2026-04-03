@@ -18,9 +18,12 @@ urlpatterns = [
     path('dashboard/subjects/', views.manage_subjects, name='manage_subjects'),
     path('dashboard/subjects/add/', views.add_subject, name='add_subject'),
     path('dashboard/results/add/', views.add_result, name='add_result'),
+    path('dashboard/results/bulk/', views.bulk_add_results, name='bulk_add_results'),
     path('dashboard/results/delete/<int:result_id>/', views.delete_result, name='delete_result'),
-    path('dashboard/settings/', views.institute_settings, name='institute_settings'),
     path('dashboard/student/<path:registration_number>/', views.student_result_admin, name='student_result_admin'),
+    path('dashboard/exams/', views.manage_exams, name='manage_exams'),
+    path('dashboard/exams/add/', views.add_exam, name='add_exam'),
+    path('dashboard/settings/', views.institute_settings, name='institute_settings'),
 
     # login logout
     path('login/', views.login_view, name='login'),

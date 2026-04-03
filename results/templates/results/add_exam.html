@@ -3,14 +3,14 @@
 <html>
 
 <head>
-       <title>Add Subject</title>
+       <title>Add Exam</title>
        <link rel="stylesheet" href="{% static 'results/style.css' %}">
 </head>
 
 <body>
        <div class="topbar">
-              <h2>Add Subject</h2>
-              <a href="{% url 'manage_subjects' %}">← Back</a>
+              <h2>Add Exam</h2>
+              <a href="{% url 'manage_exams' %}">← Back</a>
        </div>
 
        <div class="login-box">
@@ -25,14 +25,10 @@
                             <option value="{{ class }}">{{ class }}</option>
                             {% endfor %}
                      </select><br><br>
-                     <input type="text" name="name" placeholder="Subject Name" required><br><br>
-                     <button type="submit">Add Subject</button>
+                     <input type="text" name="name" placeholder="Exam Name (e.g. Unit Test 1)" required><br><br>
+                     <input type="date" name="date" required><br><br>
+                     <button type="submit">Add Exam</button>
               </form>
-              <br>
-              <p style="color:#777; font-size:13px">
-                     ⚠️ Make sure students are added and approved first
-                     so their classes appear in the dropdown.
-              </p>
        </div>
 </body>
 

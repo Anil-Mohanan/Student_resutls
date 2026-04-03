@@ -1,43 +1,159 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html>
+
 <head>
-       <meta charset="UTF-8">
-       <meta name="viewport" content="width=device-width, initial-scale=1.0">
        <title>{{ student.name }} - Result</title>
        <link rel="stylesheet" href="{% static 'results/style.css' %}">
+       <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
+
 <body>
-       <h1>{{student.name}}</h1>
-       <p>Registration Number : {{ student.registration_number }} | Class: {{ student.class_name }} | Roll Number : {{ student.roll_number }}</p>
-       <h2>Results</h2>
-       <table>
-              <tr>
-                     <th>Subject</th>
-                     <th>Marks</th>
-                     <th>Total</th>
-                     <th>Stauts</th>
-              </tr>
-              {% for result in results %}
-              <tr>
-                     <td>{{ result.subject.name }}</td>
-                     <td>{{ result.marks }}</td>
-                     <td>{{ result.total_marks }}</td>
-                     <td>
-                            {% if result.is_pass %}
-                                   <span class="pass">Pass ✅</span>
-                            {% else %}
-                                   <span class="fail">Fail ❌</span>
-                            {% endif %}
-                     </td>
-              </tr>
-              {% empty %}
-              <tr>
-                     <td colspan="4">No result Found.</td>
-              </tr>
-              {% endfor %}
-       </table>
-       <br>
-       <a href="{% url 'student_list' %}"> Back to all Students</a>
+
+       {% if user.is_authenticated %}
+       <div class="admin-bar">
+              <span>👤 Logged in as <strong>{{ user.username }}</strong></span>
+              <a href="{% url 'dashboard' %}">Go to Dashboard →</a>
+       </div>
+       {% endif %}
+
+       <div class="table-wrapper">
+              <h1>{{ student.name }}</h1>
+              <p>
+                     <strong>Registration:</strong> {{ student.registration_number }} &nbsp;|&nbsp;
+                     <strong>Roll:</strong> {{ student.roll_number }} &nbsp;|&nbsp;
+                     <strong>Class:</strong> {{ student.class_name }}
+              </p>
+
+              <!-- Exam Selector -->
+              {% if exams %}
+              <div style="margin-bottom:20px">
+                     <strong>Select Exam:</strong>&nbsp;
+                     {% for exam in exams %}
+                     <a href="?exam_id={{ exam.id }}"
+                            class="filter-btn {% if selected_exam.id == exam.id %}active{% endif %}">
+                            {{ exam.name }}
+                     </a>
+                     {% endfor %}
+              </div>
+              {% endif %}
+
+              <!-- Results Table -->
+              {% if selected_exam %}
+              <h2>{{ selected_exam.name }} — {{ selected_exam.date }}</h2>
+              <table>
+                     <tr>
+                            <th>#</th>
+                            <th>Subject</th>
+                            <th>Marks</th>
+                            <th>Total</th>
+                            <th>%</th>
+                            <th>Status</th>
+                     </tr>
+                     {% for result in results %}
+                     <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ result.subject.name }}</td>
+                            <td>{{ result.marks }}</td>
+                            <td>{{ result.total_marks }}</td>
+                            <td>{{ result.percentage }}%</td>
+                            <td>
+                                   {% if result.is_pass %}
+                                   <span class="pass">PASS ✅</span>
+                                   {% else %}
+                                   <span class="fail">FAIL ❌</span>
+                                   {% endif %}
+                            </td>
+                     </tr>
+                     {% empty %}
+                     <tr>
+                            <td colspan="6" style="text-align:center; padding:20px">
+                                   No results for this exam yet.
+                            </td>
+                     </tr>
+                     {% endfor %}
+              </table>
+              {% endif %}
+
+              <!-- Performance Chart -->
+              {% if chart_data != "{}" %}
+              <div style="margin-top:40px">
+                     <h2>📈 Performance Over Time</h2>
+                     <canvas id="performanceChart" height="100"></canvas>
+              </div>
+
+              <script>
+                     const chartData = JSON.parse('{{ chart_data | escapejs }}');
+                     const colors = [
+                            '#4CAF50', '#2196F3', '#FF9800',
+                            '#E91E63', '#9C27B0', '#00BCD4'
+                     ];
+
+                     const datasets = Object.keys(chartData).map((subject, index) => ({
+                            label: subject,
+                            data: chartData[subject].percentages,
+                            borderColor: colors[index % colors.length],
+                            backgroundColor: colors[index % colors.length] + '22',
+                            tension: 0.3,
+                            fill: false,
+                            pointRadius: 5,
+                            pointHoverRadius: 8,
+                     }));
+
+                     // get all unique exam names in order
+                     const allExams = [];
+                     Object.values(chartData).forEach(d => {
+                            d.exams.forEach(e => {
+                                   if (!allExams.includes(e)) allExams.push(e);
+                            });
+                     });
+
+                     new Chart(document.getElementById('performanceChart'), {
+                            type: 'line',
+                            data: {
+                                   labels: allExams,
+                                   datasets: datasets
+                            },
+                            options: {
+                                   responsive: true,
+                                   scales: {
+                                          y: {
+                                                 min: 0,
+                                                 max: 100,
+                                                 ticks: {
+                                                        callback: value => value + '%'
+                                                 },
+                                                 title: {
+                                                        display: true,
+                                                        text: 'Percentage (%)'
+                                                 }
+                                          },
+                                          x: {
+                                                 title: {
+                                                        display: true,
+                                                        text: 'Exams'
+                                                 }
+                                          }
+                                   },
+                                   plugins: {
+                                          legend: {
+                                                 position: 'top'
+                                          },
+                                          tooltip: {
+                                                 callbacks: {
+                                                        label: ctx => `${ctx.dataset.label}: ${ctx.parsed.y}%`
+                                                 }
+                                          }
+                                   }
+                            }
+                     });
+              </script>
+              {% endif %}
+
+              <br>
+              <a href="{% url 'student_list' %}">← Back to Portal</a>
+       </div>
+
 </body>
+
 </html>

@@ -26,6 +26,10 @@
                      <h3>{{ total_results }}</h3>
                      <p>Results</p>
               </div>
+              <div class="card">
+                     <h3>{{ total_exams }}</h3>
+                     <p>Exams</p>
+              </div>
        </div>
 
        <div class="actions">
@@ -40,6 +44,8 @@
     <a href="{% url 'add_result' %}" class="btn">Add Result</a>
     <a href="{% url 'institute_settings' %}" class="btn">Settings</a>
     <a href="{% url 'student_list' %}" class="btn">View Public Portal</a>
+    <a href="{% url 'bulk_add_results' %}" class="btn">Bulk Result Entry</a>
+     <a href="{% url 'manage_exams' %}" class="btn">Manage Exams</a>
 </div>
 </body>
 

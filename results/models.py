@@ -1,3 +1,4 @@
+from unittest.main import MAIN_EXAMPLES
 from django.template.defaultfilters import default
 from enum import unique
 from django.db import models
@@ -22,9 +23,6 @@ def generate_registration_number():
 
        return f"{initials}/{current_year}/{str(next_number).zfill(3)}"
 
-
-
-
 class InstituteSettings(models.Model):
        institute_name = models.CharField(max_length = 100)
        institute_initials = models.CharField(max_length = 10)
@@ -47,16 +45,31 @@ class Student(models.Model):
        class_name = models.CharField(max_length = 20)
        status = models.CharField(max_length = 10, choices = STATUS_CHOICES, default = 'pending')
        joined_year = models.IntegerField(default= timezone.now().year)
+       registered_at = models.DateTimeField(auto_now_add=True)
        
        def __str__(self):
               return f"{self.registration_number} - {self.name}"
 
 class Subject(models.Model):
        name = models.CharField(max_length = 100)
+       class_name = models.CharField(max_length = 20)
+
+       class Meta:
+              unique_together = ['name','class_name']
 
        def __str__(self):
               return self.name
 
+class Exam(models.Model):
+       name = models.CharField(max_length = 100)
+       class_name = models.CharField(max_length = 250)
+       date = models.DateField()
+
+       class Meta:
+              ordering = ['date']
+
+       def __str__(self):
+              return f"{self.name} - {self.class_name}"
 
 class Result(models.Model):
 
@@ -64,10 +77,21 @@ class Result(models.Model):
        subject = models.ForeignKey(Subject,on_delete=models.CASCADE)
        marks = models.IntegerField()
        total_marks = models.IntegerField(default=100)
+       exam = models.ForeignKey(Exam,on_delete=models.CASCADE,related_name='result')
+
+       class Meta:
+              unique_together = ['student', 'subject','exam']
 
        @property
        def is_pass(self):
               return self.marks >= (self.total_marks * 0.35)
+
+       @property
+       def percentage(self):
+              return round((self.marks/self.total_marks) * 100, 1)
        
        def __str__(self):
               return f"{self.student.name} - {self.subject.name} - {self.marks}"
+
+
+

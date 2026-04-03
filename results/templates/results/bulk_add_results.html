@@ -1,0 +1,130 @@
+{% load static %}
+{% load result_extras %}
+<!DOCTYPE html>
+<html>
+
+<head>
+       <title>Bulk Result Entry</title>
+       <link rel="stylesheet" href="{% static 'results/style.css' %}">
+</head>
+
+<body>
+       <div class="topbar">
+              <h2>Bulk Result Entry</h2>
+              <a href="{% url 'dashboard' %}">← Dashboard</a>
+       </div>
+
+       {% if saved %}
+       <p class="success">✅ {{ saved }} results saved successfully.</p>
+       {% endif %}
+
+       <!-- Filter Form -->
+       <div class="table-wrapper" style="margin-bottom:20px">
+              <form method="GET">
+                     <div style="display:flex; gap:15px; align-items:flex-end; flex-wrap:wrap">
+                            <div>
+                                   <label><strong>Select Class</strong></label><br><br>
+                                   <select name="class_name" required onchange="this.form.submit()">
+                                          <option value="">-- Select Class --</option>
+                                          {% for class in classes %}
+                                          <option value="{{ class }}" {% if selected_class == class %}selected{% endif %}>
+                                                 {{ class }}
+                                          </option>
+                                          {% endfor %}
+                                   </select>
+                            </div>
+                            <div>
+                                   <label><strong>Select Subject</strong></label><br><br>
+                                   <select name="subject_id" {% if selected_class %}required{% endif %}>
+                                          <option value="">-- Select Subject --</option>
+                                          {% for subject in subjects %}
+                                          <option value="{{ subject.id }}" {% if selected_subject_id == subject.id|stringformat:"s" %}selected{% endif %}>
+                                                 {{ subject.name }}
+                                          </option>
+                                          {% endfor %}
+                                   </select>
+                            </div>
+                            <div>
+                                   <label><strong>Select Exam</strong></label><br><br>
+                                   <select name="exam_id" {% if selected_class %}required{% endif %}>
+                                          <option value="">-- Select Exam --</option>
+                                          {% for exam in exams %}
+                                          <option value="{{ exam.id }}" {% if selected_exam_id == exam.id|stringformat:"s" %}selected{% endif %}>
+                                                 {{ exam.name }}
+                                          </option>
+                                          {% endfor %}
+                                   </select>
+                            </div>
+                            <div>
+                                   <button type="submit" style="margin-bottom: 2px;">🔍 Load Students</button>
+                            </div>
+                     </div>
+              </form>
+       </div>
+
+       <!-- Results Entry Table -->
+       {% if students %}
+       <div class="table-wrapper">
+              <h3>
+                     Class: {{ selected_class }} —
+                     Subject: {{ selected_subject.name }} —
+                     {{ students|length }} Students
+              </h3>
+
+              <form method="POST">
+                     {% csrf_token %}
+                     <input type="hidden" name="subject_id" value="{{ selected_subject_id }}">
+                     <input type="hidden" name="exam_id" value="{{ selected_exam_id }}">
+                     <input type="hidden" name="class_name" value="{{ selected_class }}">
+
+                     <div style="margin-bottom:15px; display:flex; align-items:center; gap:15px">
+                            <label><strong>Total Marks for all:</strong></label>
+                            <input type="number" name="total_marks" value="100" style="width:100px" required>
+                     </div>
+
+                     <table>
+                            <tr>
+                                   <th>#</th>
+                                   <th>Name</th>
+                                   <th>Roll No</th>
+                                   <th>Marks</th>
+                                   <th>Status</th>
+                            </tr>
+                            {% for student in students %}
+                            <tr>
+                                   <td>{{ forloop.counter }}</td>
+                                   <td>{{ student.name }}</td>
+                                   <td>{{ student.roll_number }}</td>
+                                   <td>
+                                          <input type="hidden" name="student_ids" value="{{ student.id }}">
+                                          <input type="number" name="marks_{{ student.id }}"
+                                                 value="{{ existing_results|get_item:student.id }}"
+                                                 placeholder="Enter marks" min="0" style="width:120px">
+                                   </td>
+                                   <td>
+                                          {% if existing_results|get_item:student.id %}
+                                          <span class="pass">Already entered</span>
+                                          {% else %}
+                                          <span style="color:#aaa">Not entered</span>
+                                          {% endif %}
+                                   </td>
+                            </tr>
+                            {% endfor %}
+                     </table>
+
+                     <br>
+                     <button type="submit">💾 Save All Results</button>
+              </form>
+       </div>
+
+       {% elif selected_class and selected_subject_id %}
+       <div class="table-wrapper">
+              <p style="text-align:center; padding:20px; color:#777">
+                     No approved students found in class {{ selected_class }}.
+              </p>
+       </div>
+       {% endif %}
+
+</body>
+
+</html>

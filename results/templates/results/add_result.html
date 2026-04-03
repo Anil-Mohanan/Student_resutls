@@ -32,9 +32,17 @@
                      <option value="{{ subject.id }}">{{ subject.name }}</option>
                      {% endfor %}
               </select><br><br>
+              <select name="exam" required>
+                     <option value="">-- Select Exam --</option>
+                     {% for exam in exams %}
+                     <option value="{{ exam.id }}">{{ exam.name }} ({{ exam.class_name }})</option>
+                     {% endfor %}
+              </select><br><br>
               <input type="number" name="marks" placeholder="Marks Obtained" required><br><br>
               <input type="number" name="total_marks" placeholder="Total Marks" value="100" required><br><br>
               <button type="submit">Add Result</button>
+
+              
        </form>
 </body>
 
