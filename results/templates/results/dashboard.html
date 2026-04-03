@@ -1,0 +1,46 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+       <title>Dashboard</title>
+       <link rel="stylesheet" href="{% static 'results/style.css' %}">
+</head>
+
+<body>
+       <div class="topbar">
+              <h2>Admin Dashboard</h2>
+              <a href="{% url 'logout' %}">Logout</a>
+       </div>
+
+       <div class="stats">
+              <div class="card">
+                     <h3>{{ total_students }}</h3>
+                     <p>Students</p>
+              </div>
+              <div class="card">
+                     <h3>{{ total_subjects }}</h3>
+                     <p>Subjects</p>
+              </div>
+              <div class="card">
+                     <h3>{{ total_results }}</h3>
+                     <p>Results</p>
+              </div>
+       </div>
+
+       <div class="actions">
+    <a href="{% url 'manage_students' %}" class="btn">Manage Students</a>
+    <a href="{% url 'pending_students' %}" class="btn" style="position:relative">
+        Pending Approvals
+        {% if pending_count > 0 %}
+        <span class="badge">{{ pending_count }}</span>
+        {% endif %}
+    </a>
+    <a href="{% url 'manage_subjects' %}" class="btn">Manage Subjects</a>
+    <a href="{% url 'add_result' %}" class="btn">Add Result</a>
+    <a href="{% url 'institute_settings' %}" class="btn">Settings</a>
+    <a href="{% url 'student_list' %}" class="btn">View Public Portal</a>
+</div>
+</body>
+
+</html>

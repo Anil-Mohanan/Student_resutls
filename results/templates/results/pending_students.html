@@ -1,0 +1,42 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+       <title>Pending Approvals</title>
+       <link rel="stylesheet" href="{% static 'results/style.css' %}">
+</head>
+
+<body>
+       <div class="topbar">
+              <h2>Pending Approvals</h2>
+              <a href="{% url 'dashboard' %}">← Dashboard</a>
+       </div>
+
+       <table>
+              <tr>
+                     <th>Registration Number</th>
+                     <th>Name</th>
+                     <th>Action</th>
+              </tr>
+              {% for student in students %}
+              <tr>
+                     <td>{{ student.registration_number }}</td>
+                     <td>{{ student.name }}</td>
+                     <td>
+                            <a href="{% url 'approve_student' student.id %}" class="btn">Approve</a>
+                            <a href="{% url 'reject_student' student.id %}" class="btn" style="background:red"
+                                   onclick="return confirm('Reject this student?')">Reject</a>
+                     </td>
+              </tr>
+              {% empty %}
+              <tr>
+                     <td colspan="3" style="text-align:center; padding:30px">
+                            No pending registrations.
+                     </td>
+              </tr>
+              {% endfor %}
+       </table>
+</body>
+
+</html>

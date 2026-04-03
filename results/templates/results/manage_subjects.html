@@ -1,0 +1,32 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+       <title>Manage Subjects</title>
+       <link rel="stylesheet" href="{% static 'results/style.css' %}">
+</head>
+
+<body>
+       <div class="topbar">
+              <h2>Subjects</h2>
+              <a href="{% url 'dashboard' %}">← Dashboard</a>
+       </div>
+       <a href="{% url 'add_subject' %}" class="btn">+ Add Subject</a><br><br>
+       <table>
+              <tr>
+                     <th>Subject Name</th>
+              </tr>
+              {% for subject in subjects %}
+              <tr>
+                     <td>{{ subject.name }}</td>
+              </tr>
+              {% empty %}
+              <tr>
+                     <td>No subjects yet.</td>
+              </tr>
+              {% endfor %}
+       </table>
+</body>
+
+</html>

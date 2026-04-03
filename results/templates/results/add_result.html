@@ -1,0 +1,38 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+       <title>Add Result</title>
+       <link rel="stylesheet" href="{% static 'results/style.css' %}">
+</head>
+
+<body>
+       <div class="topbar">
+              <h2>Add Result</h2>
+              <a href="{% url 'dashboard' %}">← Dashboard</a>
+       </div>
+       {% if error %}
+       <p class="error">{{ error }}</p>
+       {% endif %}
+       <form method="POST">
+              {% csrf_token %}
+              <select name="student" required>
+                     <option value="">Select Student</option>
+                     {% for student in students %}
+                     <option value="{{ student.id }}">{{ student.name }} ({{ student.roll_number }})</option>
+                     {% endfor %}
+              </select><br><br>
+              <select name="subject" required>
+                     <option value="">Select Subject</option>
+                     {% for subject in subjects %}
+                     <option value="{{ subject.id }}">{{ subject.name }}</option>
+                     {% endfor %}
+              </select><br><br>
+              <input type="number" name="marks" placeholder="Marks Obtained" required><br><br>
+              <input type="number" name="total_marks" placeholder="Total Marks" value="100" required><br><br>
+              <button type="submit">Add Result</button>
+       </form>
+</body>
+
+</html>

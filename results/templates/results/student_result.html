@@ -1,0 +1,44 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+       <meta charset="UTF-8">
+       <meta name="viewport" content="width=device-width, initial-scale=1.0">
+       <title>{{ student.name }} - Result</title>
+       <link rel="stylesheet" href="{% static 'results/style.css' %}">
+</head>
+<body>
+       <h1>{{student.name}}</h1>
+       <p>Roll Number: {{ student.roll_number }} | Class: {{ student.class_name }}</p>
+
+       <h2>Results</h2>
+       <table>
+              <tr>
+                     <th>Subject</th>
+                     <th>Marks</th>
+                     <th>Total</th>
+                     <th>Stauts</th>
+              </tr>
+              {% for result in results %}
+              <tr>
+                     <td>{{ result.subject.name }}</td>
+                     <td>{{ result.marks }}</td>
+                     <td>{{ result.total_marks }}</td>
+                     <td>
+                            {% if result.is_pass %}
+                                   <span class="pass">Pass ✅</span>
+                            {% else %}
+                                   <span class="fail">Fail ❌</span>
+                            {% endif %}
+                     </td>
+              </tr>
+              {% empty %}
+              <tr>
+                     <td colspan="4">No result Found.</td>
+              </tr>
+              {% endfor %}
+       </table>
+       <br>
+       <a href="{% url 'student_list' %}"> Back to all Students</a>
+</body>
+</html>

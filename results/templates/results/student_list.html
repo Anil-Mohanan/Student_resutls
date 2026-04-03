@@ -1,0 +1,93 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+       <title>Student Result Portal</title>
+       <link rel="stylesheet" href="{% static 'results/style.css' %}">
+</head>
+
+<body>
+
+       <div class="portal-header">
+              <h1>📋 Student Result Portal</h1>
+              <p>Select your class and search for your result</p>
+       </div>
+
+       {% if user.is_authenticated %}
+
+       <div class="admin-bar">
+              <span>👤 Logged in as <strong>{{ user.username }}</strong></span>
+              <a href="{% url 'dashboard' %}">Go to Dashboard</a>
+       </div>
+       {% endif %}
+
+
+       <!-- Class Filter Buttons -->
+       <div class="class-filters">
+              <a href="/" class="filter-btn {% if not selected_class %}active{% endif %}">All</a>
+              {% for class in classes %}
+              <a href="/?class={{ class }}" class="filter-btn {% if selected_class == class %}active{% endif %}">
+                     {{ class }}
+              </a>
+              {% endfor %}
+       </div>
+
+       <!-- Search Bar -->
+       <form method="GET" action="/">
+              {% if selected_class %}
+              <input type="hidden" name="class" value="{{ selected_class }}">
+              {% endif %}
+              <div class="search-bar">
+                     <input type="text" name="search" placeholder="Search by name or roll number..."
+                            value="{{ search }}">
+                     <button type="submit">Search</button>
+                     {% if search %}
+                     <a href="/?class={{ selected_class }}" class="clear-btn">Clear</a>
+                     {% endif %}
+              </div>
+       </form>
+
+       <!-- Results Table -->
+       <div class="table-wrapper">
+              {% if selected_class %}
+              <h3>Class: {{ selected_class }}
+                     <span class="count">({{ students|length }} students)</span>
+              </h3>
+              {% endif %}
+
+              {% if search %}
+              <p class="search-info">Showing results for: <strong>"{{ search }}"</strong></p>
+              {% endif %}
+
+              <table>
+                     <tr>
+                            <th>Roll Number</th>
+                            <th>Name</th>
+                            <th>Class</th>
+                            <th>Result</th>
+                     </tr>
+                     {% for student in students %}
+                     <tr>
+                            <td>{{ student.roll_number }}</td>
+                            <td>{{ student.name }}</td>
+                            <td>{{ student.class_name }}</td>
+                            <td>
+                                   <a href="{% url 'student_result' student.registration_number %}" class="btn">
+                                          View Result
+                                   </a>
+                            </td>
+                     </tr>
+                     {% empty %}
+                     <tr>
+                            <td colspan="4" style="text-align:center; padding: 30px;">
+                                   No students found.
+                            </td>
+                     </tr>
+                     {% endfor %}
+              </table>
+       </div>
+
+</body>
+
+</html>

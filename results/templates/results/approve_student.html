@@ -1,0 +1,29 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+       <title>Approve Student</title>
+       <link rel="stylesheet" href="{% static 'results/style.css' %}">
+</head>
+
+<body>
+       <div class="topbar">
+              <h2>Approve Student</h2>
+              <a href="{% url 'pending_students' %}">← Back</a>
+       </div>
+
+       <div class="login-box">
+              <p><strong>Name:</strong> {{ student.name }}</p>
+              <p><strong>Registration Number:</strong> {{ student.registration_number }}</p>
+              <hr><br>
+              <form method="POST">
+                     {% csrf_token %}
+                     <input type="text" name="roll_number" placeholder="Assign Roll Number" required><br><br>
+                     <input type="text" name="class_name" placeholder="Assign Class (e.g. 8A)" required><br><br>
+                     <button type="submit">✅ Approve Student</button>
+              </form>
+       </div>
+</body>
+
+</html>

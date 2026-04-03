@@ -1,0 +1,22 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+       <title>Add Subject</title>
+       <link rel="stylesheet" href="{% static 'results/style.css' %}">
+</head>
+
+<body>
+       <div class="topbar">
+              <h2>Add Subject</h2>
+              <a href="{% url 'manage_subjects' %}">← Back</a>
+       </div>
+       <form method="POST">
+              {% csrf_token %}
+              <input type="text" name="name" placeholder="Subject Name" required><br><br>
+              <button type="submit">Add Subject</button>
+       </form>
+</body>
+
+</html>

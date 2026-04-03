@@ -1,0 +1,36 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+       <title>Manage Students</title>
+       <link rel="stylesheet" href="{% static 'results/style.css' %}">
+</head>
+
+<body>
+       <div class="topbar">
+              <h2>Students</h2>
+              <a href="{% url 'dashboard' %}">← Dashboard</a>
+       </div>
+       <a href="{% url 'add_student' %}" class="btn">+ Add Student</a><br><br>
+       <table>
+              <tr>
+                     <th>Roll Number</th>
+                     <th>Name</th>
+                     <th>Class</th>
+              </tr>
+              {% for student in students %}
+              <tr>
+                     <td>{{ student.roll_number }}</td>
+                     <td>{{ student.name }}</td>
+                     <td>{{ student.class_name }}</td>
+              </tr>
+              {% empty %}
+              <tr>
+                     <td colspan="3">No students yet.</td>
+              </tr>
+              {% endfor %}
+       </table>
+</body>
+
+</html>
