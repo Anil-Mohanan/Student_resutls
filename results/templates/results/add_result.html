@@ -20,7 +20,10 @@
               <select name="student" required>
                      <option value="">Select Student</option>
                      {% for student in students %}
-                     <option value="{{ student.id }}">{{ student.name }} ({{ student.roll_number }})</option>
+                     <option value="{{ student.id }}" {% if student.id|stringformat:"s" == preselected_student_id %}
+                            selected {% endif %}>
+                            {{ student.name }} ({{ student.registration_number }})
+                     </option>
                      {% endfor %}
               </select><br><br>
               <select name="subject" required>

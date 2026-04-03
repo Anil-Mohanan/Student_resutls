@@ -13,7 +13,7 @@ def generate_registration_number():
 
        if last_student and last_student.registration_number:
               try:
-                     last_number = int(last_student.registration_number.split('/')[-2])
+                     last_number = int(last_student.registration_number.split('/')[-1])
                      next_number = last_number + 1
               except:
                      next_number = 1

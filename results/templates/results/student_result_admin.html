@@ -1,0 +1,68 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+       <title>{{ student.name }} - Admin View</title>
+       <link rel="stylesheet" href="{% static 'results/style.css' %}">
+</head>
+
+<body>
+       <div class="topbar">
+              <h2>{{ student.name }} — Results</h2>
+              <a href="{% url 'manage_students' %}">← Back</a>
+       </div>
+
+       <div class="table-wrapper">
+              <p>
+                     <strong>Registration:</strong> {{ student.registration_number }} &nbsp;|&nbsp;
+                     <strong>Roll:</strong> {{ student.roll_number }} &nbsp;|&nbsp;
+                     <strong>Class:</strong> {{ student.class_name }}
+              </p>
+
+              <table>
+                     <tr>
+                            <th>#</th>
+                            <th>Subject</th>
+                            <th>Marks</th>
+                            <th>Total</th>
+                            <th>Status</th>
+                            <th>Delete</th>
+                     </tr>
+                     {% for result in results %}
+                     <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ result.subject.name }}</td>
+                            <td>{{ result.marks }}</td>
+                            <td>{{ result.total_marks }}</td>
+                            <td>
+                                   {% if result.is_pass %}
+                                   <span class="pass">PASS ✅</span>
+                                   {% else %}
+                                   <span class="fail">FAIL ❌</span>
+                                   {% endif %}
+                            </td>
+                            <td>
+                                   <a href="{% url 'delete_result' result.id %}" class="btn"
+                                          style="background:red" onclick="return confirm('Delete this result?')">
+                                          Delete
+                                   </a>
+                            </td>
+                     </tr>
+                     {% empty %}
+                     <tr>
+                            <td colspan="6" style="text-align:center; padding:20px">
+                                   No results added yet.
+                            </td>
+                     </tr>
+                     {% endfor %}
+              </table>
+
+              <br>
+              <a href="{% url 'add_result' %}?student_id={{ student.id }}" class="btn">
+                     + Add Result for {{ student.name }}
+              </a>
+       </div>
+</body>
+
+</html>

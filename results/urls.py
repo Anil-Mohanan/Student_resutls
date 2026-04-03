@@ -20,6 +20,7 @@ urlpatterns = [
     path('dashboard/results/add/', views.add_result, name='add_result'),
     path('dashboard/results/delete/<int:result_id>/', views.delete_result, name='delete_result'),
     path('dashboard/settings/', views.institute_settings, name='institute_settings'),
+    path('dashboard/student/<path:registration_number>/', views.student_result_admin, name='student_result_admin'),
 
     # login logout
     path('login/', views.login_view, name='login'),

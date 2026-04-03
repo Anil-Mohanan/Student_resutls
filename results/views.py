@@ -170,33 +170,57 @@ def add_subject(request):
 
 @login_required(login_url='login')
 def add_result(request):
-       students = Student.objects.all()
-       subjects = Subject.objects.all()
-       error = None
-       if request.method == 'POST':
-              student_id = request.POST['student']
-              subject_id = request.POST['subject']
-              marks = request.POST['marks']
-              total_marks = request.POST['total_marks']
-              student = get_object_or_404(Student,id = student_id)
-              subject = get_object_or_404(Subject, id = subject_id)
-              if Result.objects.filter(student = student, subject = subject).exists():
-                     error = 'Result for this subject already exists'
-              else: 
-                     Result.objects.create(student = student, subject = subject , marks = marks, total_marks= total_marks)
-                     return redirect('dashboard')
-       return render(request,'results/add_result.html',{
-              'students': students,
-              'subjects': subjects,
-              'error': error
-       })
+    students = Student.objects.filter(status='approved')
+    subjects = Subject.objects.all()
+    error = None
+    
+    # pre-select student if coming from student result admin page
+    preselected_student_id = request.GET.get('student_id', '')
 
+    if request.method == 'POST':
+        student_id = request.POST['student']
+        subject_id = request.POST['subject']
+        marks = request.POST['marks']
+        total_marks = request.POST['total_marks']
+        student = get_object_or_404(Student, id=student_id)
+        subject = get_object_or_404(Subject, id=subject_id)
+        if Result.objects.filter(student=student, subject=subject).exists():
+            error = 'Result for this subject already exists'
+        else:
+            Result.objects.create(
+                student=student,
+                subject=subject,
+                marks=marks,
+                total_marks=total_marks
+            )
+            return redirect('student_result_admin', 
+                          registration_number=student.registration_number)
+
+    return render(request, 'results/add_result.html', {
+        'students': students,
+        'subjects': subjects,
+        'error': error,
+        'preselected_student_id': preselected_student_id,
+    })
+
+@login_required(login_url='login')
+def student_result_admin(request, registration_number):
+    student = get_object_or_404(Student, registration_number=registration_number)
+    results = student.results.all()
+    subjects = Subject.objects.all()
+
+    return render(request, 'results/student_result_admin.html', {
+        'student': student,
+        'results': results,
+        'subjects': subjects,
+    })
 
 @login_required(login_url = 'login')
-def delete_result(request,result_id):
-       result = get_object_or_404(Result,id = result_id)
+def delete_result(request, result_id):
+       result = get_object_or_404(Result, id=result_id)
+       registration_number = result.student.registration_number
        result.delete()
-       return redirect('dashboard')
+       return redirect('student_result_admin', registration_number=registration_number)
 
 
 # ---------- SETTINGS ---------- #
@@ -225,3 +249,4 @@ def institute_settings(request):
               'error': error,
               'success': success,
        })
+
